@@ -10,10 +10,10 @@
     - code: `code/convert_wikipedia_to_jsonl.py`
     - data: `data/wikipedia/jsonl_output/wikipedia_filtered.jsonl`
     - Notes: 
-        (1) The urls in frames are readable urls (with some umlauts using special characters) but the ones in wikipedia use special characters for things like underscore and umlauts. To unify their format, I normalized the urls.
-        (2) Some urls in frames contain `#` which points to a specific section in a wikipedia article. When filtering links, the frames urls are split and only the first part (i.e., the page link) is kept.
-        (3) Some urls are in the mobile format (`en.m.wikipedia` instead of `en.wikipedia`). Simply removing `.m` led to more unmatched urls (more than 400).
-        (4) No matter how hard I tried, there are **228** frames wiki link that cannot be matched in the wikipedia data although these frames wiki links indeed exit. One reason for that is the following: The paper said it uses the [20230601en dump](https://tinyurl.com/36jxum2y). But some links (e.g., https://en.wikipedia.org/wiki/Tyson_Fury_vs_Oleksandr_Usyk) are about events happened in 2024.
+        1. The urls in frames are readable urls (with some umlauts using special characters) but the ones in wikipedia use special characters for things like underscore and umlauts. To unify their format, I normalized the urls.
+        2. Some urls in frames contain `#` which points to a specific section in a wikipedia article. When filtering links, the frames urls are split and only the first part (i.e., the page link) is kept.
+        3. Some urls are in the mobile format (`en.m.wikipedia` instead of `en.wikipedia`). These are converted from mobile to web format.
+        4. No matter how hard I tried, there are **200** frames wiki link that cannot be matched in the wikipedia data although these frames wiki links indeed exit. One reason for that is the following: The paper said it uses the [20230601en dump](https://tinyurl.com/36jxum2y) but some links (e.g., https://en.wikipedia.org/wiki/Tyson_Fury_vs_Oleksandr_Usyk) are about events happened in 2024.
 
 4. Index Wikipedia
     - code: 
