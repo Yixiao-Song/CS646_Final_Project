@@ -23,25 +23,27 @@
 - FRAMES data points: 528
 - Wikipedia articles in the jsonl file: 2005
 - Wikipedia jsonl: `data/wikipedia/jsonl_output/wikipedia_filtered.jsonl`
-    Note: I did not go back to further filter wikipedia to contain only the 1496 articles used in the 528 data points. 
+    *Note*: I did not go back to further filter wikipedia to contain only the 1496 articles used in the 528 data points. 
 - FRAMES jsonl: `data/frames_dataset_2_5_links_filtered.jsonl`
+- It is confirmed that all frames urls are in wikipedia jsonl.
 
 4. Index Wikipedia
     - code: 
         python -m pyserini.index.lucene \
-        --collection JsonCollection \
-        --input data/wikipedia/jsonl_output \
-        --index data/wikipedia/index_output \
-        --generator DefaultLuceneDocumentGenerator \
-        --threads 4 \
-        --storePositions --storeDocvectors --storeRaw
-    - data: `data/wikipedia/index_output`
+            --collection JsonCollection \
+            --input data/wikipedia/jsonl_output \
+            --index data/wikipedia/index_output_filtered_wiki \
+            --generator DefaultLuceneDocumentGenerator \
+            --threads 4 \
+            --storePositions --storeDocvectors --storeRaw
+    - data: `data/wikipedia/index_output_filtered_wiki`
 
 5. Set up Qwen2.5-14B-Instruct generation class
     - code: `code/GetResponseQwen14B.py`
 
 6. Get Oracle results
     - code: `code/oracle.py`
+
 
 
 
