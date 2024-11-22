@@ -24,7 +24,20 @@ with open(input_tsv, 'r', encoding='utf-8') as tsv_file, \
         wiki_links_lst = ast.literal_eval(row['wiki_links'])
         if len(wiki_links_lst) > 5:
             continue
-        row['wiki_links'] = [utils.normalize_url(x) for x in wiki_links_lst]
+
+        clean_lst = []
+        for link in wiki_links_lst:
+            normalized_link = utils.normalize_url(link)
+            # remove section information from the link
+            remove_pound = normalized_link.split("#")[0]
+            # convert mobile format to web format
+            remove_mobile = remove_pound.replace(
+                "https://en.m.wikipedia.org/",
+                "https://en.wikipedia.org/"
+                )
+            clean_lst.append(remove_mobile)
+        row['wiki_links'] = clean_lst
+
         jsonl_file.write(json.dumps(row, ensure_ascii=False) + '\n')
         out_cnt += 1
 
