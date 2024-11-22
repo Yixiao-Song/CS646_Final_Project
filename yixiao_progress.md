@@ -19,15 +19,7 @@
     - code: `code/remove_data_with_unmatched_urls_from_frames.py`
     - data: `data/frames_dataset_2_5_links_filtered.jsonl` (528 dps)
 
-**Interm Summary**:
-- FRAMES data points: 528
-- Wikipedia articles in the jsonl file: 2005
-- Wikipedia jsonl: `data/wikipedia/jsonl_output/wikipedia_filtered.jsonl`
-    *Note*: I did not go back to further filter wikipedia to contain only the 1496 articles used in the 528 data points. 
-- FRAMES jsonl: `data/frames_dataset_2_5_links_filtered.jsonl`
-- It is confirmed that all frames urls are in wikipedia jsonl.
-
-4. Index Wikipedia
+5. Index Wikipedia
     - code: 
         python -m pyserini.index.lucene \
             --collection JsonCollection \
@@ -38,11 +30,26 @@
             --storePositions --storeDocvectors --storeRaw
     - data: `data/wikipedia/index_output_filtered_wiki`
 
+**Interm Summary**:
+- FRAMES data points: 528
+- Wikipedia articles in the jsonl file: 2005
+- Wikipedia jsonl: `data/wikipedia/jsonl_output/wikipedia_filtered.jsonl`
+    *Note*: I did not go back to further filter wikipedia to contain only the 1496 articles used in the 528 data points. 
+- Wikipedia index: `data/wikipedia/index_output_filtered_wiki`
+- FRAMES jsonl: `data/frames_dataset_2_5_links_filtered.jsonl`
+- It is confirmed that all frames urls are in wikipedia jsonl.
+
 5. Set up Qwen2.5-14B-Instruct generation class
     - code: `code/GetResponseQwen14B.py`
+    - temperature: `0.0`
 
 6. Get Oracle results
-    - code: `code/oracle.py`
+    1. Get a url to contents mapping for getting contents using the FRAMES grouth truth urls
+        - code: `code/convert_wikipedia_to_json.py`
+        - data: `data/wikipedia/jsonl_output/wikipedia_filtered_url_to_content.json`
+
+    2. Get the oracle results
+        - code: 
 
 
 
