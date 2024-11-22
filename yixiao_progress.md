@@ -15,6 +15,17 @@
         3. Some urls are in the mobile format (`en.m.wikipedia` instead of `en.wikipedia`). These are converted from mobile to web format.
         4. No matter how hard I tried, there are **200** frames wiki link that cannot be matched in the wikipedia data although these frames wiki links indeed exit. One reason for that is the following: The paper said it uses the [20230601en dump](https://tinyurl.com/36jxum2y) but some links (e.g., https://en.wikipedia.org/wiki/Tyson_Fury_vs_Oleksandr_Usyk) are about events happened in 2024.
 
+4. Filter FRAMES based on the unmatched urls
+    - code: `code/remove_data_with_unmatched_urls_from_frames.py`
+    - data: `data/frames_dataset_2_5_links_filtered.jsonl` (528 dps)
+
+**Interm Summary**:
+- FRAMES data points: 528
+- Wikipedia articles in the jsonl file: 2005
+- Wikipedia jsonl: `data/wikipedia/jsonl_output/wikipedia_filtered.jsonl`
+    Note: I did not go back to further filter wikipedia to contain only the 1496 articles used in the 528 data points. 
+- FRAMES jsonl: `data/frames_dataset_2_5_links_filtered.jsonl`
+
 4. Index Wikipedia
     - code: 
         python -m pyserini.index.lucene \
