@@ -4,10 +4,6 @@ key = url
 val = contents
 """
 
-# pip install datasets
-
-import os
-import pdb
 import json
 from tqdm import tqdm
 
