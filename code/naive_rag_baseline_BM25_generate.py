@@ -7,19 +7,8 @@ import ast
 import pdb
 import json
 import utils
-import argparse
 from tqdm import tqdm
 from QwenGeneration import QwenGeneration
-
-# add baseline_name to the parser
-parser = argparse.ArgumentParser()
-parser.add_argument("--baseline_type", type=str, default="oracle")
-args = parser.parse_args()
-
-if args.baseline_type == "oracle":
-    key_to_ans = "Qwen_oracle_answer"
-elif args.baseline_type == "zero_shot":
-    key_to_ans = "Qwen_zero_shot_answer"
 
 """
 LOAD DATA
@@ -48,7 +37,7 @@ with open(naive_BM25_output_file, "a") as f:
         context = utils.prepare_context(
             dict_item,
             wiki_url_contents_dict,
-            key_to_links='naive_rag_retrieve_results'
+            key_to_links='naive_rag_retrieve_results_BM25'
             )
         query = dict_item["Prompt"]
 
