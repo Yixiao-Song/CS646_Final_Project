@@ -30,22 +30,22 @@
             --storePositions --storeDocvectors --storeRaw
     - data: `data/wikipedia/index_output_filtered_wiki`
 
-**Interm Summary**:
-- FRAMES data points: 528
-- Wikipedia articles in the jsonl file: 2005
-- Wikipedia jsonl: `data/wikipedia/jsonl_output/wikipedia_filtered.jsonl`
-    *Note*: I did not go back to further filter wikipedia to contain only the 1496 articles used in the 528 data points. 
-- Wikipedia index: `data/wikipedia/index_output_filtered_wiki`
-- FRAMES jsonl: `data/frames_dataset_2_5_links_filtered.jsonl`
-- It is confirmed that all frames urls are in wikipedia jsonl.
+6. **Interm Summary**:
+    - FRAMES data points: 528
+    - Wikipedia articles in the jsonl file: 2005
+    - Wikipedia jsonl: `data/wikipedia/jsonl_output/wikipedia_filtered.jsonl`
+        *Note*: I did not go back to further filter wikipedia to contain only the 1496 articles used in the 528 data points. 
+    - Wikipedia index: `data/wikipedia/index_output_filtered_wiki`
+    - FRAMES jsonl: `data/frames_dataset_2_5_links_filtered.jsonl`
+    - It is confirmed that all frames urls are in wikipedia jsonl.
 
-5. Set up Qwen2.5-14B-Instruct generation class
+7. Set up Qwen2.5-14B-Instruct generation class
     - code: `code/GetResponseQwen14B.py`
     - hyperparameters: default
     - maximum length: 32768
     - **Important**: set `HF_HOME` in your `~/.bashrc`
 
-6. Get Oracle results (upper bound)
+8. Get Oracle results (upper bound)
     1. Get a url to contents mapping for getting contents using the FRAMES grouth truth urls
         - code: `code/convert_wikipedia_to_json.py`
         - data: `data/wikipedia/jsonl_output/wikipedia_filtered_url_to_content.json`
@@ -54,12 +54,12 @@
         - code: `code/oracle.py`
         - data: `data/Qwen_Outputs/oracle_output.jsonl`
 
-7. Get zero-shot results (lower bound)
+9. Get zero-shot results (lower bound)
     - code: `code/zero_shot_baseline.py`
     - data: `data/Qwen_Outputs/zero_shot_and_oracle_output.jsonl`
     - Note: oracle and zero-shot results are combined in the same file.
 
-8. Get naive rag results (BM25)
+10. Get naive rag results (BM25)
     - Retrieve
         - code: `code/naive_rag_baseline_BM25_retrieve.py` (done on Arkham)
         - data: `data/Qwen_Outputs/naive_rag_baseline_BM25_retrieve.jsonl`
@@ -72,7 +72,7 @@
         - `The context does not mention anything about an artist who released the album "Father of Asahd" attending the same high school as Mark Ruiz, but it is irrelevant to answering the specific question about Mark Ruiz's Olympic participation.`
         - `The question does not provide sufficient information to accurately identify the specific 2002 science fiction novel or the author in question. However, given the mention of La Llorona and themes of personal identity, and considering Philip K. Dick's influence and works that incorporate similar themes, it is possible the author being referred to could be someone influenced by or working in a similar thematic space.\nPhilip K. Dick wrote a trilogy under the publisher Doubleday (before switching to Ballantine Books for much of his career). The trilogy in question is the "Three Stigmata of Palmer Eldritch"/"Ubik"/"Flow My Tears, the Policeman Said" series. However, these were written in the 1960s and 1970s, not in 2002.\nAnother possibility is James Patrick Kelly, who wrote a novel called "Burn" in 2002 which could potentially fit the description, but he did not write a trilogy under the same publisher that year.\nGiven the constraints and the lack of precise details, the most accurate response would be that the specific author and trilogy cannot be definitively identified from the given information. The author and trilogy in question likely wrote under Tor Books, a common publisher for science fiction novels referencing La Llorona and exploring themes of personal identity in the early 2000s. However, without more specific details, it's impossible to name the exact trilogy.`
 
-9. Get naive rag results (DPR)
+11. Get naive rag results (DPR)
     - Retrieve
         - code: `code/naive_rag_baseline_DPR_retrieve.py`
         - saved embeddings and index: `data/embeddings`
@@ -83,9 +83,10 @@
         - code: 
         - data: 
 
-10. Retrieval metrics
+12. Retrieval metrics
 
-9. Auto-rater
+13. Auto-rater
+
     The auto-rater uses gpt-4o-mini as the judge ($0.150 / 1M input tokens; $0.600 / 1M output tokens)
     
     - code: 
