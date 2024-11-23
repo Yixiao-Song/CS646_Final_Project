@@ -41,17 +41,22 @@
 
 5. Set up Qwen2.5-14B-Instruct generation class
     - code: `code/GetResponseQwen14B.py`
-    - temperature: `0.0`
+    - hyperparameters: default
+    - maximum length: 32768
+    - **Important**: set `HF_HOME` in your `~/.bashrc`
 
-6. Get Oracle results
+6. Get Oracle results (upper bound)
     1. Get a url to contents mapping for getting contents using the FRAMES grouth truth urls
         - code: `code/convert_wikipedia_to_json.py`
         - data: `data/wikipedia/jsonl_output/wikipedia_filtered_url_to_content.json`
 
     2. Get the oracle results
-        - code: 
+        - code: `code/oracle.py`
+        - data: `data/Qwen_Outputs/oracle_output.jsonl`
 
-
+7. Get zero-shot results (lower bound)
+    - code: `code/zero_shot_baseline.py`
+    - data: `data/Qwen_Outputs/zero_shot_and_oracle_output.jsonl`
 
 
 draft: 
