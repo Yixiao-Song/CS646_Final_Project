@@ -99,9 +99,9 @@
     
     - code: `code/auto_rater_with_GPT.py`; `code/calc_answer_accuracy.py`
     - data: 
-    - Note: I tried with Qwen2.5 7B and 14B models as the auto-rater using the prompt in `utils.py` (`auto_eval_prompt_template`). But the model does not follow the instruction at all. Simple heuristic such as `ground_truth.lower() in qwen_answer.lower()` also does not work because some ground truth answers are sentences. 
+    - Note: I tried with Qwen2.5 7B and 14B models as the auto-rater using the prompt in `utils.py` (`auto_eval_prompt_template`). But the model does not follow the instruction at all. Simple heuristic such as `ground_truth.lower() in qwen_answer.lower()` (i.e., exact match) also does not work because some ground truth answers are sentences. 
 
-14. Progress on final answer evaluate
+14. Progress on final answer evaluation
     - [x] oracle
         - [x] judged
         - [x] rated
@@ -119,68 +119,17 @@
         - [ ] rated
         - Result: 
 
+15. Retrieval metrics
+    - code: `code/retrieval_metrics.py`
+    - Node: 
+        - The metrics include precision@k, recall@k,, F1@k, and MAP. The k is set to 5 by default. 
+        - nDCG@k is not included because there is no relevance score in the ground truth. The ground truth urls are equally relevant.
+        - Oracle and zero-shot do not need to be evaluated.
 
-
-draft: 
-5. Set up Qwen generation script
-[x] pip install vllm
-- export HF_HOME=/scratch/workspace/mkarpinska_umass_edu-nocha_llms
--   import argparse
-    import os
-    import pickle
-    import logging
-    from tqdm import tqdm
-    import json
-    import torch
-    # from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
-    import time
-    from transformers import AutoTokenizer
-    from vllm import LLM, SamplingParams
-    import ray
-    import csv
-    import sys
-- Load model code: 
-  - `model_id` is just hf id (e.g., `--model_id Qwen/Qwen2.5-1.5B-Instruct`)
-  - `tensor_parallel_size` is the num of gpus (no odd num, it’s either nothing there (for 1 gpu) do 2 or 4 or 6)
-  - `trust_remote_code=True` may need for some models, can omit and see if it complains
-    def load_model_and_tokenizer(model_id):
-        tokenizer = AutoTokenizer.from_pretrained(model_id)
-        ray.shutdown()
-        ray.init(num_gpus=torch.cuda.device_count())
-
-        if '72' in model_id or '70' in model_id:
-            llm = LLM(model=model_id, tensor_parallel_size=4, trust_remote_code=True)
-        elif '14' in model_id or "medium" in model_id or '32' in model_id or '512' in model_id:
-            llm = LLM(model=model_id, tensor_parallel_size=2, trust_remote_code=True)
-        else:
-            llm = LLM(model=model_id, trust_remote_code=True)
-
-        return llm, tokenizer
-
-- for the model_call, pass the llm and tokenizer returned
-  (set hf path to the folder containing the models `export HF_HOME=/scratch/workspace/mkarpinska_umass_edu-nocha_llms`)
-
-    def model_call(prompt, llm, tokenizer, ctx_window=128000, temp=0.0, max_tokens=800):
-        sampling_params = SamplingParams(temperature=temp, max_tokens=max_tokens)
-
-        messages = [
-            {"role": "user", "content": prompt}
-        ]
-        text = tokenizer.apply_chat_template(
-            messages,
-            tokenize=False,
-            add_generation_prompt=True
-        )
-
-        outputs = llm.generate([text], sampling_params)
-
-        for output in outputs:
-            generated_text = output.outputs[0].text
-            print(f"Generated text: {generated_text!r}", flush=True)
-
-        return generated_text
-- To make sure vllm sees the correct num of gpus
-  `ray.shutdown()`
-  `ray.init(num_gpus=torch.cuda.device_count())`
-- module load cuda/11.8
-- Get oracle resultscd
+16. Progress on retrieval evaluation 
+    - bm25
+        - [x] evaluated
+        - Result:
+    - dpr
+        - [ ] evaluated
+        - Result:
