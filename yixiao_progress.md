@@ -86,9 +86,11 @@
 10. Retrieval metrics
 
 9. Auto-rater
+    The auto-rater uses gpt-4o-mini as the judge ($0.150 / 1M input tokens; $0.600 / 1M output tokens)
+    
     - code: 
     - data: 
-    - Note: I tried with Qwen2.5 7B and 14B models as the auto-rater using the prompt in `utils.py` (`auto_eval_prompt_template`). But the model does not follow the instruction at all. Simple heuristic such as `ground_truth.lower() in qwen_answer.lower()` also does not work because some ground truth answers are sentences.
+    - Note: I tried with Qwen2.5 7B and 14B models as the auto-rater using the prompt in `utils.py` (`auto_eval_prompt_template`). But the model does not follow the instruction at all. Simple heuristic such as `ground_truth.lower() in qwen_answer.lower()` also does not work because some ground truth answers are sentences. 
 
 draft: 
 5. Set up Qwen generation script
