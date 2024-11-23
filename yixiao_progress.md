@@ -83,17 +83,35 @@
         - code: 
         - data: 
 
-12. Retrieval metrics
-
-13. Auto-rater
+12. Auto-rater (final answer)
 
     The auto-rater uses gpt-4o-mini as the judge ($0.150 / 1M input tokens; $0.600 / 1M output tokens). To rate all 529 data points once, it costs around $0.05.
 
     The quality of the judge is evaluated on 20 data points from the oracle answers in [google sheet](https://docs.google.com/spreadsheets/d/1LJb7Q-XVFF7z15HYyHOAbxhn4yXovNmppWzfUaTaMdM/edit?usp=sharing).
     
-    - code: `code/auto_rater_with_GPT.py`
+    - code: `code/auto_rater_with_GPT.py`; `code/calc_answer_accuracy.py`
     - data: 
     - Note: I tried with Qwen2.5 7B and 14B models as the auto-rater using the prompt in `utils.py` (`auto_eval_prompt_template`). But the model does not follow the instruction at all. Simple heuristic such as `ground_truth.lower() in qwen_answer.lower()` also does not work because some ground truth answers are sentences. 
+
+13. Progress on final answer evaluate
+    - [x] oracle
+        - [x] judged
+        - [x] rated
+        - Result: 58.33%
+    - [x] zero-shot
+        - [x] judged
+        - [x] rated
+        - Result: 19.70%
+    - [x] bm25
+        - [x] judged
+        - [x] rated
+        - Result: 26.52%
+    - [ ] dpr
+        - [ ] judged
+        - [ ] rated
+        - Result: 
+
+
 
 draft: 
 5. Set up Qwen generation script
