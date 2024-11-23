@@ -26,7 +26,7 @@ for dict_item in tqdm(wiki_data):
     }
 
     wiki_url_content_dict[url] = key_dict
-    wiki_content_url_dict[dict_item["contents"][:200]] = url
+    wiki_content_url_dict[dict_item["contents"].strip()[:200]] = url
 
 wiki_url_content_out_file = "data/wikipedia/jsonl_output/wikipedia_filtered_url_to_content.json"
 with open(wiki_url_content_out_file, "w") as f:

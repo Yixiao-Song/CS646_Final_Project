@@ -9,13 +9,7 @@ from GPTGeneration import GPTGeneration
 # add baseline_name to the parser
 parser = argparse.ArgumentParser()
 parser.add_argument(
-    "--file",
-    type=str,
-    default="zero_shot_and_oracle",
-    help="file type (zero_shot_and_oracle, BM25, or DPR)"
-    )
-parser.add_argument(
-    "--key",
+    "--type",
     type=str,
     default="oracle",
     help="dict key to get the answer (oracle, zero_shot, bm25, dpr)"
@@ -25,21 +19,21 @@ args = parser.parse_args()
 """
 LOAD FRAMES DATA WITH QWEN ANSWERS
 """
-if args.file == "zero_shot_and_oracle":
+if args.type == "zero_shot":
     file_path = "data/Qwen_Outputs/zero_shot_and_oracle_output.jsonl"
-elif args.file == "BM25":
-    file_path = "data/Qwen_Outputs/naive_BM25_output.jsonl"
-elif args.file == "DPR":
-    file_path = "data/Qwen_Outputs/naive_DPR_output.jsonl"
-
-if args.key == "oracle":
-    key_to_ans = "Qwen_oracle_answer"
-elif args.key == "zero_shot":
     key_to_ans = "Qwen_zero_shot_answer"
-elif args.key == "bm25":
+elif args.type == "oracle":
+    file_path = "data/Qwen_Outputs/zero_shot_and_oracle_output.jsonl"
+    key_to_ans = "Qwen_oracle_answer"
+elif args.type == "bm25":
+    file_path = "data/Qwen_Outputs/naive_BM25_output.jsonl"
     key_to_ans = "Qwen_naive_BM25_answer"
-elif args.key == "dpr":
+elif args.type == "dpr":
+    file_path = "data/Qwen_Outputs/naive_DPR_output.jsonl"
     key_to_ans = "Qwen_naive_DPR_answer"
+
+print(f"file_path: {file_path}")
+print(f"key_to_ans: {key_to_ans}")
 
 with open(file_path, "r") as f:
     frames_data = [json.loads(x.strip()) for x in f.readlines() if x.strip()]
@@ -49,7 +43,7 @@ GENERATE RESPONSE
 """
 gpt = GPTGeneration()
 
-judgment_out_file = f"data/Auto_Rater_Outputs/gpt4o_mini_judgment_{args.key}.jsonl"
+judgment_out_file = f"data/Auto_Rater_Outputs/gpt4o_mini_judgment_{args.type}.jsonl"
 start_point = 0
 if os.path.exists(judgment_out_file):
     judgment_data = [json.loads(x.strip()) \
@@ -66,10 +60,6 @@ with open(judgment_out_file, "a") as f:
         ground_truth = dict_item["Answer"]
         predicted_answer = dict_item[key_to_ans]
 
-        print(f"Question: {question}")
-        print(f"Ground Truth: {ground_truth}")
-        print(f"Predicted Answer: {predicted_answer}")
-
         prompt = utils.auto_eval_prompt_template.format(
             question=question,
             ground_truth_answer=ground_truth,
@@ -77,7 +67,6 @@ with open(judgment_out_file, "a") as f:
         )
 
         judgment, _, _ = gpt.get_response(prompt)
-        print(f"Judgment: {judgment}")
         
-        dict_item[f"gpt4o_mini_{args.key}_judgment"] = judgment
+        dict_item[f"gpt4o_mini_{args.type}_judgment"] = judgment
         f.write(json.dumps(dict_item) + "\n")
