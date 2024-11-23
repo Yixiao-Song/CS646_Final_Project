@@ -126,8 +126,9 @@ Bank of America Tower: 1,200 feet
 Therefore, Brontë Tower would rank approximately 20th among the tallest buildings in New York City as of August 2024.
 Judgement: no
 
-Your turn:
+Your turn: If Answer 1 is entailed in Answer 2, return "yes", otherwise return "no". Do not return anything else.
+
 Question: {question}
 Answer 1: {ground_truth_answer}
-Answer 2: {qwen_answer}
+Answer 2: {predicted_answer}
 Judgement: """
