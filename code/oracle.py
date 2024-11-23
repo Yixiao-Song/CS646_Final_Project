@@ -8,7 +8,7 @@ import pdb
 import json
 import utils
 from tqdm import tqdm
-from GetResponse import GetResponse
+from QwenGeneration import QwenGeneration
 
 """
 LOAD DATA
@@ -26,7 +26,7 @@ print("Loaded wiki_url_contents_dict.")
 """
 GENERATE RESPONSE
 """
-qwen_model = GetResponse()
+qwen_model = QwenGeneration()
 print("Qwen model loaded.")
 
 oracle_output_file = "data/Qwen_Outputs/oracle_output.jsonl"
