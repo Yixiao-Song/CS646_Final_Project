@@ -19,7 +19,7 @@
     - code: `code/remove_data_with_unmatched_urls_from_frames.py`
     - data: `data/frames_dataset_2_5_links_filtered.jsonl` (528 dps)
 
-5. Index Wikipedia
+5. Index Wikipedia (done on Arkham)
     - code: 
         python -m pyserini.index.lucene \
             --collection JsonCollection \
@@ -57,7 +57,32 @@
 7. Get zero-shot results (lower bound)
     - code: `code/zero_shot_baseline.py`
     - data: `data/Qwen_Outputs/zero_shot_and_oracle_output.jsonl`
+    - Note: oracle and zero-shot results are combined in the same file.
 
+8. Get naive rag results (BM25)
+    - Retrieve
+        - code: `code/naive_rag_baseline_BM25_retrieve.py` (done on Arkham)
+        - data: `data/Qwen_Outputs/naive_rag_baseline_BM25_retrieve.jsonl`
+    - Generate
+        - code: `code/naive_rag_baseline_BM25_generate.py`
+        - data: `data/Qwen_Outputs/naive_BM25_output.jsonl`
+    - Note: naive rag results are in a separate file from the zero-shot and oracle results.
+    - Interesting outputs:
+        - `However, it's important to note that the phrasing of the question doesn't align correctly with the information given about Dismal Euphony and Queen.`
+        - `The context does not mention anything about an artist who released the album "Father of Asahd" attending the same high school as Mark Ruiz, but it is irrelevant to answering the specific question about Mark Ruiz's Olympic participation.`
+
+9. Get naive rag results (DPR)
+    - Retrieve
+        - code: 
+
+    - Note: DPR can only encode 512 tokens, which is way smaller than most of the documents in wikipedia.
+
+10. Retrieval metrics
+
+9. Auto-rater
+    - code: 
+    - data: 
+    - Note: I tried with Qwen2.5 7B and 14B models as the auto-rater using the prompt in `utils.py` (`auto_eval_prompt_template`). But the model does not follow the instruction at all. Simple heuristic such as `ground_truth.lower() in qwen_answer.lower()` also does not work because some ground truth answers are sentences.
 
 draft: 
 5. Set up Qwen generation script
