@@ -86,6 +86,10 @@
     - Generate
         - code: `code/naive_rag_baseline_DPR_generate.py`
         - data: `data/Qwen_Outputs/naive_DPR_output.jsonl`
+    - Note: Same as BM25, the top 5 documents are retrieved and used as the context for generating answers.
+    - Interesting outputs:
+        - `The question seems to be asking for the population of the birthplace of the writer of "Culdcept Saga," but the provided context does not contain any information about the writer of "Culdcept Saga" or their birthplace. Therefore, I cannot accurately provide the population of their birthplace based on the given context. If you could provide additional details or clarify the request, I would be happy to assist further. However, based on the instruction format, I'll assume a generic response since specific data isn't available:\n1 million`
+        - `The given context does not contain information about the arrival of the Mercedes-Benz W222 at dealerships or any wedding involving a star from the sitcom Modern Family. Therefore, I cannot provide an accurate answer based solely on the information provided. The question seems to mix unrelated topics and dates. Could you please specify the date or provide more context?`
 
 13. Auto-rater (final answer)
 
