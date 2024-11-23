@@ -130,6 +130,15 @@
     - bm25
         - [x] evaluated
         - Result:
+            - Recall@5:    0.5283
+            - Precision@5: 0.2814
+            - F1@5:        0.3603
+            - MAP:         0.4576
     - dpr
-        - [ ] evaluated
+        - [x] evaluated
         - Result:
+            - Rec@5:  0.4632
+            - Prec@5: 0.2481
+            - F1@5:   0.3169
+            - MAP:    0.3761
+    - Note: DPR performs worse than bm25 in retrieval. The reason can be that the context is too long for DPR to encode.
