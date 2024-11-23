@@ -40,7 +40,7 @@ def prepare_context(
 
     if key_to_links == "wiki_links":
         wiki_links = dict_item[key_to_links]
-    elif key_to_links == "naive_rag_retrieve_results":
+    else:
         wiki_links = [x[0] for x in dict_item[key_to_links]]
 
     for wiki_link in wiki_links:
