@@ -74,9 +74,14 @@
 
 9. Get naive rag results (DPR)
     - Retrieve
-        - code: 
-
+        - code: `code/naive_rag_baseline_DPR_retrieve.py`
+        - saved embeddings and index: `data/embeddings`
+        - data: `data/Qwen_Outputs/naive_rag_baseline_DPR_retrieve.jsonl`
     - Note: DPR can only encode 512 tokens, which is way smaller than most of the documents in wikipedia.
+
+    - Generate
+        - code: 
+        - data: 
 
 10. Retrieval metrics
 
