@@ -1,4 +1,6 @@
+import os
 import pdb
+import json
 from urllib.parse import unquote
 
 def normalize_url(url):
@@ -16,7 +18,9 @@ def normalize_url(url):
     normalized_url = decoded_url.replace(" ", "_")
     return normalized_url
 
-def prepare_context(dict_item, wiki_url_contents_dict):
+def prepare_context(
+        dict_item, wiki_url_contents_dict, key_to_links="wiki_links"
+        ):
     """Prepare the context for the oracle prompting.
     For each wiki link in the grouth truth data, extract the title and
     contents from the wiki_url_contents_dict, and concatenate all of
@@ -34,7 +38,11 @@ def prepare_context(dict_item, wiki_url_contents_dict):
     # initialize context for oracle prompting
     context = ""
 
-    wiki_links = dict_item["wiki_links"]
+    if key_to_links == "wiki_links":
+        wiki_links = dict_item[key_to_links]
+    elif key_to_links == "naive_rag_retrieve_results":
+        wiki_links = [x[0] for x in dict_item[key_to_links]]
+
     for wiki_link in wiki_links:
         wiki_key_dict = wiki_url_contents_dict.get(wiki_link, "")
         if not wiki_key_dict: 
@@ -47,6 +55,26 @@ def prepare_context(dict_item, wiki_url_contents_dict):
         context += f"{title}\n\n{contents}\n\n"
     
     return context
+
+def get_start_point(file_path):
+    """Get the starting point for appending to a file.
+    This function checks if the generation has started before and find the pick-up point.
+
+    Args:
+        file_path (str): the output file path to check for the starting
+        point.
+    
+    Returns:
+        start_point (int): the starting point for appending to the file.
+    """
+    if os.path.exists(file_path):
+        with open(file_path, "r") as f:
+            start_point = len([json.loads(x.strip()) \
+                            for x in f.readlines() if x.strip()])
+    else:
+        start_point = 0
+
+    return start_point
 
 oracle_prompt_template = """Given the context, answer the question with concise answers.
 
