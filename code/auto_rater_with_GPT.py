@@ -44,12 +44,7 @@ GENERATE RESPONSE
 gpt = GPTGeneration()
 
 judgment_out_file = f"data/Auto_Rater_Outputs/gpt4o_mini_judgment_{args.type}.jsonl"
-start_point = 0
-if os.path.exists(judgment_out_file):
-    judgment_data = [json.loads(x.strip()) \
-                     for x in open(judgment_out_file, "r").readlines() \
-                        if x.strip()]
-    start_point = len(judgment_data)
+start_point = utils.get_start_point(judgment_out_file)
 
 # gpt-4o-mini pricing:
 #   $0.150 / 1M input tokens
