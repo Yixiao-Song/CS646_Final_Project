@@ -9,7 +9,7 @@ import json
 import utils
 import argparse
 from tqdm import tqdm
-from GetResponse import GetResponse
+from QwenGeneration import QwenGeneration
 
 # add baseline_name to the parser
 parser = argparse.ArgumentParser()
@@ -37,7 +37,7 @@ print("Loaded wiki_url_contents_dict.")
 """
 GENERATE RESPONSE
 """
-qwen_model = GetResponse()
+qwen_model = QwenGeneration()
 print("Qwen model loaded.")
 
 naive_BM25_output_file = "data/Qwen_Outputs/naive_BM25_output.jsonl"

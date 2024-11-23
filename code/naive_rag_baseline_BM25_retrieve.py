@@ -4,7 +4,6 @@ import pdb
 import json
 import utils
 from tqdm import tqdm
-from GetResponse import GetResponse
 from pyserini.search.lucene import LuceneSearcher
 
 """
