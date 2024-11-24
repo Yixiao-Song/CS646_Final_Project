@@ -50,11 +50,6 @@
     - **Important**: set `HF_HOME` in your `~/.bashrc`
 
 9. Get Oracle results (upper bound)
-    1. Get a url to contents mapping for getting contents using the FRAMES grouth truth urls
-        - code: `code/convert_wikipedia_to_json.py`
-        - data: `data/wikipedia/jsonl_output/wikipedia_filtered_url_to_content.json`
-
-    2. Get the oracle results
         - code: `code/oracle.py`
         - data: `data/Qwen_Outputs/oracle_output.jsonl`
 
@@ -82,6 +77,12 @@
         - saved embeddings and index: `data/embeddings`
         - data: `data/Qwen_Outputs/naive_rag_baseline_DPR_retrieve.jsonl`
     - Note: DPR can only encode 512 tokens, which is way smaller than most of the documents in wikipedia.
+        - code: `code/count_avg_wikipedia_article_length.py`
+        - Result (estimated by tiktoken): 
+            - mean: 5197.82
+            - median: 2810.0
+            - min: 23
+            - max: 55744
 
     - Generate
         - code: `code/naive_rag_baseline_DPR_generate.py`
@@ -94,13 +95,13 @@
 
 13. Auto-rater (final answer)
 
-    The auto-rater uses gpt-4o-mini as the judge ($0.150 / 1M input tokens; $0.600 / 1M output tokens). To rate all 529 data points once, it costs around $0.05.
+    The auto-rater uses gpt-4o-mini as the judge ($0.150 / 1M input tokens; $0.600 / 1M output tokens). To rate all 528 data points once, it costs around $0.06.
 
-    The quality of the judge is evaluated on 20 data points from the oracle answers in [google sheet](https://docs.google.com/spreadsheets/d/1LJb7Q-XVFF7z15HYyHOAbxhn4yXovNmppWzfUaTaMdM/edit?usp=sharing).
+    The quality of the judge is evaluated on 20 data points from the oracle answers in [google sheet](https://docs.google.com/spreadsheets/d/1LJb7Q-XVFF7z15HYyHOAbxhn4yXovNmppWzfUaTaMdM/edit?usp=sharing). The auto-rater got 100% accuracy on these 20 data points.
     
     - code: `code/auto_rater_with_GPT.py`; `code/calc_answer_accuracy.py`
-    - data: 
-    - Note: I tried with Qwen2.5 7B and 14B models as the auto-rater using the prompt in `utils.py` (`auto_eval_prompt_template`). But the model does not follow the instruction at all. Simple heuristic such as `ground_truth.lower() in qwen_answer.lower()` (i.e., exact match) also does not work because some ground truth answers are sentences. 
+    - data: `data/Auto_Rater_Outputs`
+    - Note: I tried with Qwen2.5 7B and 14B models as the auto-rater using the prompt in `utils.py` (`auto_eval_prompt_template`). But the model does not follow the instruction at all. Simple heuristic such as `ground_truth.lower().strip() in qwen_answer.lower()` (i.e., exact match) also does not work because some ground truth answers are sentences. 
 
 14. Progress on final answer evaluation
     - [x] oracle
@@ -123,7 +124,7 @@
 15. Retrieval metrics
     - code: `code/retrieval_metrics.py`
     - Node: 
-        - The metrics include precision@k, recall@k,, F1@k, and MAP. The k is set to 5 by default. 
+        - The metrics include precision@k, recall@k, F1@k, and MAP. The k is set to 5 by default. 
         - nDCG@k is not included because there is no relevance score in the ground truth. The ground truth urls are equally relevant.
         - Oracle and zero-shot do not need to be evaluated.
 
