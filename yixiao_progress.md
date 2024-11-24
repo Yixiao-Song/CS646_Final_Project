@@ -115,10 +115,10 @@
         - [x] judged
         - [x] rated
         - Result: 26.52%
-    - [ ] dpr
-        - [ ] judged
-        - [ ] rated
-        - Result: 
+    - [x] dpr
+        - [x] judged
+        - [x] rated
+        - Result: 27.46%
 
 15. Retrieval metrics
     - code: `code/retrieval_metrics.py`
