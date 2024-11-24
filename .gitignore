@@ -1,5 +1,14 @@
 final_proj_env
 code/bak
-data/wikipedia/graelo___wikipedia
-data/wikipedia/index_output_full_wiki
-data
+data/wikipedia
+# data/wikipedia/graelo___wikipedia
+# data/wikipedia/data_wikipedia_graelo___wikipedia_20230601.en_1.2.0_adc3510c8803ea3a09dfa39c3b1e982827964dcf31ab62d35738d41db94653c5.lock
+# data/wikipedia/index_output_filtered_wiki
+# data/wikipedia/index_output_full_wiki
+# data/wikipedia/jsonl_output/wikipedia.jsonl.bak
+# data/wikipedia/jsonl_output/wikipedia_filtered_content_to_url.json
+# data/wikipedia/jsonl_output/wikipedia_filtered_url_to_content.json
+data/frames_dataset.tsv
+data/frames_dataset_2_5_links.jsonl
+data/embeddings
+code/__pycache__/
