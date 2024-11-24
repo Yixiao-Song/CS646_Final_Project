@@ -59,18 +59,6 @@ frames_wiki_links = []
 for dict_item in frames_data:
     wiki_links_lst = dict_item['wiki_links']
 
-    # get rid of `#` parts in the links which refer to a specific section in an
-    # wikipedia article
-    # clean_link_lst = []
-    # for link in wiki_links_lst:
-    #     remove_pound = link.split("#")[0]
-    #     remove_mobile = remove_pound.replace(
-    #         "https://en.m.wikipedia.org/",
-    #         "https://en.wikipedia.org/"
-    #         )
-    #     clean_link_lst.append(remove_mobile)
-
-    # frames_wiki_links.extend(clean_link_lst)
     frames_wiki_links.extend(wiki_links_lst)
 
 print(f"There are {len(frames_wiki_links)} wiki links "
