@@ -181,3 +181,11 @@ Question: {question}
 Answer 1: {ground_truth_answer}
 Answer 2: {predicted_answer}
 Judgement: """
+
+
+extract_query_prompt_template = """Please break down the following question into a list of atomic level questions. 
+The maximum number of questions should be {max_num}, and the output should be in JSON format with the key name 'atomic_questions'.
+
+Question: {question}
+Answer: 
+"""
