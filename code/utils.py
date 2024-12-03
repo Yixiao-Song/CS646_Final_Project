@@ -56,34 +56,28 @@ def prepare_context(
     
     return context
 
-def extract_wiki_links(combined_results):
+def extract_wiki_links(combined_results, topk=None):
     wiki_links = []
     for query_data in combined_results.values():
         results = query_data["retrieve_results"]
         links = [pair[0] for pair in results]
+        if topk:
+            links = links[:topk]
         wiki_links.extend(links)
     return wiki_links
 
-def prepare_context_rerank(dict_item, wiki_url_contents_dict, key_to_links="wiki_links", return_links=True):
+def prepare_context_rerank(dict_item, wiki_url_contents_dict, key_to_links="wiki_links", return_links=True, topk=None):
     context = ""
-
-    if key_to_links == "wiki_links":
-        wiki_links = dict_item[key_to_links]
-    elif "decomp" in key_to_links:
-        wiki_links = extract_wiki_links(dict_item[key_to_links])
-    else:
-        wiki_links = [x[0] for x in dict_item[key_to_links]]
-    
-    for wiki_link in wiki_links:
-        all_links.append(wiki_link)
+    assert "decomp" in key_to_links
+    wiki_links = extract_wiki_links(dict_item[key_to_links], topk=topk)
+    for i, wiki_link in enumerate(wiki_links):
         wiki_key_dict = wiki_url_contents_dict.get(wiki_link, "")
         if not wiki_key_dict: 
             print("No wiki_key_dict found for wiki_link:", wiki_link)
             pdb.set_trace()
         title = wiki_key_dict["title"]
         contents = wiki_key_dict["contents"]
-        context += f"{n}.\n\n{title}\n\n{contents}\n\n"
-    
+        context += f"{i+1}.\n\n{title}\n\n{contents}\n\n"
     if return_links:
         return context, wiki_links
     return context
@@ -136,6 +130,7 @@ Query:
 {question}
 
 Retrieved Documents:
+
 {context}
 
 The indices of the five documents most relevant to the query are as follows, separated by commas:"""

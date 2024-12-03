@@ -13,7 +13,7 @@ from transformers import DPRContextEncoder, DPRQuestionEncoder, DPRContextEncode
 from sklearn.metrics.pairwise import cosine_similarity
 
 class RetrievalPipeline:
-    def __init__(self, retriever_type="bm25"):
+    def __init__(self, retriever_type="bm25", maxq=5, topk=2):
         self.retriever_type = retriever_type
         self.qwen_model = QwenGeneration()
         
@@ -27,6 +27,9 @@ class RetrievalPipeline:
             self._init_dpr()
         else:
             raise ValueError(f"Unknown retriever type: {retriever_type}")
+        
+        self.maxq = maxq
+        self.topk = topk
 
     def _init_bm25(self):
         """Initialize BM25 retriever"""
@@ -52,7 +55,7 @@ class RetrievalPipeline:
 
     def _setup_dpr_embeddings(self):
         """Set up DPR embeddings and FAISS index"""
-        save_directory = "data/embeddings"
+        save_directory = "/project/pi_miyyer_umass_edu/yixiao/CS646/FinalProject/data/embeddings"
         os.makedirs(save_directory, exist_ok=True)
 
         wiki_embedding_file = f"{save_directory}/wiki_embeddings.npy"
@@ -122,7 +125,7 @@ class RetrievalPipeline:
         with open(output_file, "w") as f:
             for dict_item in tqdm(frames_data):
                 combined_results = {}
-                queries = dict_item["extracted_queries"] if "extracted_queries" in dict_item else [dict_item["Prompt"]]
+                queries = dict_item["extracted_subquery"] if "extracted_subquery" in dict_item else [dict_item["Prompt"]]
                 for query_idx, query in enumerate(queries):
                     print(f"Processing query {query_idx + 1}: {query}")
                     if self.retriever_type == "bm25":
@@ -153,18 +156,24 @@ class RetrievalPipeline:
                 context, links = utils.prepare_context_rerank(
                     dict_item,
                     self.wiki_url_contents_dict,
-                    key_to_links=key_to_links
+                    key_to_links=key_to_links,
+                    return_links=True,
+                    topk=self.topk
                 )
                 query = dict_item["Prompt"]
                 prompt = utils.rerank_prompt_template.format(
                     question=query,
                     context=context
                 )
+                # save prompt to a txt file
+                with open("data/rerank_prompt.txt", "a") as f:
+                    f.write(prompt)
 
                 valid = False
                 attempts = 0
                 while not valid and attempts < 5:
                     response = self.qwen_model.get_response(prompt)
+                    pdb.set_trace()
                     valid = utils.is_integer_list(response)
                     attempts += 1
                 if not valid:
@@ -217,11 +226,24 @@ def main():
         choices=["bm25", "dpr"],
         help="Retriever type to use (bm25, dpr)"
     )
+    parser.add_argument(
+        "--maxq",
+        type=int,
+        default=5,
+        help="Maximum number of queries to generate"
+    )
+    parser.add_argument(
+        "--topk",
+        type=int,
+        default=2,
+        help="Top k documents to retrieve"
+    )
     args = parser.parse_args()
 
-    pipeline = RetrievalPipeline(retriever_type=args.retriever)
+    pipeline = RetrievalPipeline(retriever_type=args.retriever, maxq=args.maxq, topk=args.topk)
     
-    frames_file = "data/frames_dataset_2_5_links_filtered_decomposed.jsonl"
+    frames_file = f"/project/pi_miyyer_umass_edu/yekyung/CS646/CS646_Final_Project/data/frames_dataset_2_5_links_filtered_extracted_queries_max_{args.maxq}.jsonl"
+    print(f"Loading decomposed frames_data from {frames_file}...")
     with open(frames_file, "r") as f:
         frames_data = [json.loads(x.strip()) for x in f.readlines() if x.strip()]
     print("Loaded decomposed frames_data.")
@@ -238,9 +260,9 @@ def main():
     else:
         raise ValueError(f"Unknown retriever type: {args.retriever}")
 
-    retrieve_file = pipeline.process_retrieval(frames_data, retrieve_output)
-    rerank_file = pipeline.process_reranking(retrieve_file, rerank_output)
-    pipeline.process_generation(rerank_file, generate_output)
+    # retrieve_file = pipeline.process_retrieval(frames_data, retrieve_output)
+    pipeline.process_reranking(retrieve_output, rerank_output)
+    pipeline.process_generation(rerank_output, generate_output)
 
 if __name__ == "__main__":
     main()

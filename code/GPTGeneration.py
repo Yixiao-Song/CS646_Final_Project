@@ -14,15 +14,22 @@ class GPTGeneration():
         # invariant variables
         self.tokenizer = tiktoken.encoding_for_model("gpt-4")
         # model keys
-        self.key = os.getenv("OPENAI_NEW_PROJ_KEY_PRIVATE")
+        self.key = os.getenv("OPENAI_KEY")
         self.client = OpenAI(api_key=self.key)
         self.seed = 1130
 
     # Returns the response from the model given a system message and a prompt text.
-    def get_response(self, prompt_text):   
+    def get_response(self, prompt_text, judge=True):   
         # Example message: "You are a helpful assistant who can extract verifiable atomic claims from a piece of text."
-        message = [{"role": "system", "content": "You are a helpful assistant who is good at judging whether Answer 1 is entailed in Answer 2."},
-                    {"role": "user", "content": prompt_text}]
+        if judge:
+            message = [
+                {"role": "system", "content": "You are a helpful assistant who is good at judging whether Answer 1 is entailed in Answer 2."},
+                {"role": "user", "content": prompt_text}
+            ]
+        else:
+            message = [
+                {"role": "user", "content": prompt_text}
+            ]
         response = self.client.chat.completions.create(
                     model=self.model_name,
                     messages=message,
