@@ -56,6 +56,50 @@ def prepare_context(
     
     return context
 
+def extract_wiki_links(combined_results):
+    wiki_links = []
+    for query_data in combined_results.values():
+        results = query_data["retrieve_results"]
+        links = [pair[0] for pair in results]
+        wiki_links.extend(links)
+    return wiki_links
+
+def prepare_context_rerank(dict_item, wiki_url_contents_dict, key_to_links="wiki_links", return_links=True):
+    context = ""
+
+    if key_to_links == "wiki_links":
+        wiki_links = dict_item[key_to_links]
+    elif "decomp" in key_to_links:
+        wiki_links = extract_wiki_links(dict_item[key_to_links])
+    else:
+        wiki_links = [x[0] for x in dict_item[key_to_links]]
+    
+    for wiki_link in wiki_links:
+        all_links.append(wiki_link)
+        wiki_key_dict = wiki_url_contents_dict.get(wiki_link, "")
+        if not wiki_key_dict: 
+            print("No wiki_key_dict found for wiki_link:", wiki_link)
+            pdb.set_trace()
+        title = wiki_key_dict["title"]
+        contents = wiki_key_dict["contents"]
+        context += f"{n}.\n\n{title}\n\n{contents}\n\n"
+    
+    if return_links:
+        return context, wiki_links
+    return context
+
+def is_integer_list(text):
+    if not text:
+        return False
+    items = [item.strip() for item in text.split(',')]
+    if any(not item for item in items):
+        return False
+    try:
+        [int(item) for item in items]
+        return True
+    except ValueError:
+        return False
+
 def get_start_point(file_path):
     """Get the starting point for appending to a file.
     This function checks if the generation has started before and find the pick-up point.
@@ -85,6 +129,16 @@ Question:
 {question}
 
 Given the context, the answer to the question:"""
+
+rerank_prompt_template = """Given a query and a set of retrieved documents for this query, select the top five most relevant documents. Return the indices of the documents in the order of their relevance, separated by commas.
+
+Query:
+{question}
+
+Retrieved Documents:
+{context}
+
+The indices of the five documents most relevant to the query are as follows, separated by commas:"""
 
 auto_eval_prompt_template = """Your task is to decide whether Answer 1 is entailed in Answer 2. If it is entailed, return "yes", otherwise return "no". Do not return anything else.
 
