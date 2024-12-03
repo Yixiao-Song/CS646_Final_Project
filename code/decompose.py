@@ -12,10 +12,21 @@ from QwenGeneration import QwenGeneration
 from transformers import DPRContextEncoder, DPRQuestionEncoder, DPRContextEncoderTokenizer, DPRQuestionEncoderTokenizer
 from sklearn.metrics.pairwise import cosine_similarity
 
+rerank_prompt_template = """Given a query and a set of retrieved documents for this query, select the top five most relevant documents. Return the indices of the documents in the order of their relevance, separated by commas. Do not return anything else.
+
+Query: {question}
+
+Retrieved Documents:
+
+{context}
+
+The indices of the five documents most relevant to the query are as follows, separated by commas:"""
+
 class RetrievalPipeline:
-    def __init__(self, retriever_type="bm25", maxq=5, topk=2):
+    def __init__(self, retriever_type="bm25", maxq=5, topk=2, ndocs=5):
         self.retriever_type = retriever_type
         self.qwen_model = QwenGeneration()
+        self.rerank_prompt_template = rerank_prompt_template
         
         with open("/project/pi_miyyer_umass_edu/yixiao/CS646/FinalProject/data/wikipedia/jsonl_output/wikipedia_filtered_url_to_content.json", "r") as f:
             self.wiki_url_contents_dict = json.load(f)
@@ -30,6 +41,7 @@ class RetrievalPipeline:
         
         self.maxq = maxq
         self.topk = topk
+        self.ndocs = ndocs
 
     def _init_bm25(self):
         """Initialize BM25 retriever"""
@@ -44,11 +56,11 @@ class RetrievalPipeline:
         self.question_tokenizer = DPRQuestionEncoderTokenizer.from_pretrained("facebook/dpr-question_encoder-single-nq-base")
         print("DPR models loaded.")
 
-        with open("data/wikipedia/jsonl_output/wikipedia_filtered.jsonl", "r") as f:
+        with open("/project/pi_miyyer_umass_edu/yixiao/CS646/FinalProject/data/wikipedia/jsonl_output/wikipedia_filtered.jsonl", "r") as f:
             self.wiki_data = [json.loads(x.strip()) for x in f.readlines() if x.strip()]
         self.wiki_data_text = [x["contents"].strip() for x in self.wiki_data]
 
-        with open("data/wikipedia/jsonl_output/wikipedia_filtered_content_to_url.json", "r") as f:
+        with open("/project/pi_miyyer_umass_edu/yixiao/CS646/FinalProject/data/wikipedia/jsonl_output/wikipedia_filtered_content_to_url.json", "r") as f:
             self.wiki_content_url_dict = json.load(f)
 
         self._setup_dpr_embeddings()
@@ -161,27 +173,25 @@ class RetrievalPipeline:
                     topk=self.topk
                 )
                 query = dict_item["Prompt"]
-                prompt = utils.rerank_prompt_template.format(
+                prompt = self.rerank_prompt_template.format(
                     question=query,
                     context=context
                 )
-                # save prompt to a txt file
-                with open("data/rerank_prompt.txt", "a") as f:
-                    f.write(prompt)
 
                 valid = False
                 attempts = 0
                 while not valid and attempts < 5:
                     response = self.qwen_model.get_response(prompt)
+                    valid, indices = utils.find_integer_list(response, n=self.ndocs)
                     pdb.set_trace()
-                    valid = utils.is_integer_list(response)
                     attempts += 1
+                    print(f"Invalidate response for query: {response}. Attempt {attempts}.")
                 if not valid:
                     print(f"Failed to get a valid response after 5 attempts for query: {query}")
                     pdb.set_trace()
 
-                result_key = "Qwen_decomp_BM25_reranked" if self.retriever_type == "bm25" else "Qwen_decomp_DPR_reranked"
-                dict_item[result_key] = [item.strip() for item in response.split(',')]
+                result_key = f"Qwen_decomp_BM25_reranked_maxq{self.maxq}_topk{self.topk}_ndocs{self.ndocs}" if self.retriever_type == "bm25" else f"Qwen_decomp_DPR_reranked_maxq{self.maxq}_topk{self.topk}_ndocs{self.ndocs}"
+                dict_item[result_key] = indices
                 f.write(json.dumps(dict_item) + "\n")
         return output_file
 
@@ -194,8 +204,8 @@ class RetrievalPipeline:
         start_point = utils.get_start_point(output_file)
 
         with open(output_file, "a") as f:
-            for dict_item in tqdm(frames_data[start_point:]):
-                key_to_links = "Qwen_decomp_BM25_reranked" if self.retriever_type == "bm25" else "Qwen_decomp_DPR_reranked"
+            for idx in tqdm(range(start_point, len(frames_data))):
+                key_to_links = f"Qwen_decomp_BM25_reranked_maxq{self.maxq}_topk{self.topk}_ndocs{self.ndocs}" if self.retriever_type == "bm25" else f"Qwen_decomp_DPR_reranked_maxq{self.maxq}_topk{self.topk}_ndocs{self.ndocs}"
                 context = utils.prepare_context(
                     dict_item,
                     self.wiki_url_contents_dict,
@@ -213,9 +223,12 @@ class RetrievalPipeline:
                 print(f"Ground truth answer: {ground_truth_ans}")
                 print(f"Qwen response: {response}")
 
-                result_key = "Qwen_decomp_BM25_answer" if self.retriever_type == "bm25" else "Qwen_decomp_DPR_answer"
-                dict_item[result_key] = response.strip()
-                f.write(json.dumps(dict_item) + "\n")
+                result_key = f"Qwen_decomp_BM25_answer_maxq{self.maxq}_topk{self.topk}_ndocs{self.ndocs}" if self.retriever_type == "bm25" else f"Qwen_decomp_DPR_answer_maxq{self.maxq}_topk{self.topk}_ndocs{self.ndocs}"
+                frames_data[idx][result_key] = response.strip()
+                
+                with open(output_file, "w") as f:
+                    for item in frames_data:
+                        f.write(json.dumps(item) + "\n")
 
 def main():
     parser = argparse.ArgumentParser()
@@ -238,9 +251,15 @@ def main():
         default=2,
         help="Top k documents to retrieve"
     )
+    parser.add_argument(
+        "--ndocs",
+        type=int,
+        default=5,
+        help="Number of documents to retrieve"
+    )
     args = parser.parse_args()
 
-    pipeline = RetrievalPipeline(retriever_type=args.retriever, maxq=args.maxq, topk=args.topk)
+    pipeline = RetrievalPipeline(retriever_type=args.retriever, maxq=args.maxq, topk=args.topk, ndocs=args.ndocs)
     
     frames_file = f"/project/pi_miyyer_umass_edu/yekyung/CS646/CS646_Final_Project/data/frames_dataset_2_5_links_filtered_extracted_queries_max_{args.maxq}.jsonl"
     print(f"Loading decomposed frames_data from {frames_file}...")

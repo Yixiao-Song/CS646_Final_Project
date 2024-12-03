@@ -1,6 +1,7 @@
 import os
 import pdb
 import json
+import re
 from urllib.parse import unquote
 
 def normalize_url(url):
@@ -94,6 +95,19 @@ def is_integer_list(text):
     except ValueError:
         return False
 
+def find_integer_list(text, n=5):
+    pattern = r'(-?\d+\s*,\s*){' + str(n-1) + r'}-?\d+'
+    matches = re.finditer(pattern, text)
+    for match in matches:
+        number_string = match.group(0)
+        try:
+            numbers = [int(num.strip()) for num in number_string.split(',')]
+            if len(numbers) == n:
+                return True, numbers
+        except ValueError:
+            continue
+    return False, None
+
 def get_start_point(file_path):
     """Get the starting point for appending to a file.
     This function checks if the generation has started before and find the pick-up point.
@@ -123,17 +137,6 @@ Question:
 {question}
 
 Given the context, the answer to the question:"""
-
-rerank_prompt_template = """Given a query and a set of retrieved documents for this query, select the top five most relevant documents. Return the indices of the documents in the order of their relevance, separated by commas.
-
-Query:
-{question}
-
-Retrieved Documents:
-
-{context}
-
-The indices of the five documents most relevant to the query are as follows, separated by commas:"""
 
 auto_eval_prompt_template = """Your task is to decide whether Answer 1 is entailed in Answer 2. If it is entailed, return "yes", otherwise return "no". Do not return anything else.
 
