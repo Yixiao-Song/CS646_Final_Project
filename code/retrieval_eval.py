@@ -6,27 +6,24 @@ from RetrievalEval import RetrievalEval
 # add baseline_name to the parser
 parser = argparse.ArgumentParser()
 parser.add_argument(
-    "--type",
+    "--file",
     type=str,
-    default="bm25",
-    help="dict key to get the retrieved links (bm25 or dpr)"
-    )
+    help="path to the file containing the retrieval results"
+)
+parser.add_argument(
+    "--key",
+    type=str,
+    help="key to the retrieval results in the file"
+)
 args = parser.parse_args()
 
 """
 LOAD FRAMES DATA WITH RETRIEVED LINKS
 """
-if args.type == "bm25":
-    file_path = "data/Qwen_Outputs/naive_rag_baseline_BM25_retrieve.jsonl"
-    key_to_links = "naive_rag_retrieve_results_BM25"
-elif args.type == "dpr":
-    file_path = "data/Qwen_Outputs/naive_rag_baseline_DPR_retrieve.jsonl"
-    key_to_links = "naive_rag_retrieve_results_DPR"
+print(f"file_path: {args.file}")
+print(f"key_to_links: {args.key}")
 
-print(f"file_path: {file_path}")
-print(f"key_to_links: {key_to_links}")
-
-with open(file_path, "r") as f:
+with open(args.file, "r") as f:
     retrieval_data = [json.loads(x.strip()) for x in f.readlines() if x.strip()]
 
 """
@@ -34,7 +31,7 @@ CALCULATE RETRIEVAL METRICS
 """
 retrieved_results = []
 for item in retrieval_data:
-    retrieved_link_score_lst = item[key_to_links]
+    retrieved_link_score_lst = item[args.key]
     retrieved_links = [x[0] for x in retrieved_link_score_lst]
     retrieved_results.append(retrieved_links)
 
@@ -49,7 +46,7 @@ precision_at_k = retrieval_metrics.precision_at_k()
 f1_at_k = retrieval_metrics.f1_at_k()
 map = retrieval_metrics.mean_average_precision()
 
-print(f"Rec@5:\t{recall_at_k:.4f}")
-print(f"Prec@5:\t{precision_at_k:.4f}")
-print(f"F1@5:\t{f1_at_k:.4f}")
-print(f"MAP:\t{map:.4f}")
+print(f"  Rec@5:\t{recall_at_k:.4f}")
+print(f"  Prec@5:\t{precision_at_k:.4f}")
+print(f"  F1@5:\t{f1_at_k:.4f}")
+print(f"  MAP:\t{map:.4f}\n")

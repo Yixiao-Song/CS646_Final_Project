@@ -19,7 +19,7 @@ def normalize_url(url):
     normalized_url = decoded_url.replace(" ", "_")
     return normalized_url
 
-def prepare_context(
+def prepare_context_oracle(
         dict_item, wiki_url_contents_dict, key_to_links="wiki_links"
         ):
     """Prepare the context for the oracle prompting.
@@ -67,10 +67,13 @@ def extract_wiki_links(combined_results, topk=None):
         wiki_links.extend(links)
     return wiki_links
 
-def prepare_context_rerank(dict_item, wiki_url_contents_dict, key_to_links="wiki_links", return_links=True, topk=None):
+def prepare_context(dict_item, wiki_url_contents_dict, key_to_links="wiki_links", return_links=True, topk=None):
     context = ""
-    assert "decomp" in key_to_links
-    wiki_links = extract_wiki_links(dict_item[key_to_links], topk=topk)
+    if "rerank" in key_to_links:
+        wiki_links = extract_wiki_links(dict_item[key_to_links], topk=topk)
+    else:
+        wiki_links = [x[0] for x in dict_item[key_to_links]]
+    
     for i, wiki_link in enumerate(wiki_links):
         wiki_key_dict = wiki_url_contents_dict.get(wiki_link, "")
         if not wiki_key_dict: 
@@ -78,7 +81,9 @@ def prepare_context_rerank(dict_item, wiki_url_contents_dict, key_to_links="wiki
             pdb.set_trace()
         title = wiki_key_dict["title"]
         contents = wiki_key_dict["contents"]
-        context += f"{i+1}.\n\n{title}\n\n{contents}\n\n"
+        context += f"{i+1}.\nTitle: {title}\nContent: {contents}\n\n"
+    context = context.strip()
+
     if return_links:
         return context, wiki_links
     return context
@@ -183,12 +188,15 @@ Your turn: If Answer 1 is entailed in Answer 2, return "yes", otherwise return "
 Question: {question}
 Answer 1: {ground_truth_answer}
 Answer 2: {predicted_answer}
-Judgement: """
+Judgement:"""
 
+extract_query_prompt_template = """Please break down the following query into a list of {max_num} subqueries. The extracted subqueries must satisfy the following requirements:
 
-extract_query_prompt_template = """Please break down the following question into a list of atomic level questions. 
-The maximum number of questions should be {max_num}, and the output should be in JSON format with the key name 'atomic_questions'.
+1. Self-containment: Each subquery should be complete and self-contained, as if it were being asked in isolation. It should not require knowledge of the original query or other subqueries.
+2. Full coverage: The subqueries, when combined, should fully address the scope of the original query.
+3. Equal specificity: Each subquery should be equally detailed, avoiding any being overly broad or overly narrow compared to the others.
 
-Question: {question}
-Answer: 
-"""
+Your output should be in JSON format, where the key is 'atomic_questions' and the value is the list of your extracted subqueries.
+
+Query: {question}
+Extracted subqueries:"""

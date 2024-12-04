@@ -1,34 +1,0 @@
-Loading uri version main
-NOTE: The modules under this branch will not run on the login node. Use
---constraint=avx512 for sbatch or srun sessions. 
-WARNING: Using incubator modules: jdk.incubator.vector
-Loading checkpoint shards:   0%|          | 0/8 [00:00<?, ?it/s]Loading checkpoint shards:  12%|█▎        | 1/8 [00:13<01:32, 13.25s/it]Loading checkpoint shards:  25%|██▌       | 2/8 [00:22<01:04, 10.82s/it]Loading checkpoint shards:  38%|███▊      | 3/8 [00:33<00:54, 10.95s/it]Loading checkpoint shards:  50%|█████     | 4/8 [00:45<00:46, 11.51s/it]Loading checkpoint shards:  62%|██████▎   | 5/8 [00:56<00:33, 11.29s/it]Loading checkpoint shards:  75%|███████▌  | 6/8 [01:10<00:24, 12.24s/it]Loading checkpoint shards:  88%|████████▊ | 7/8 [01:22<00:11, 11.96s/it]Loading checkpoint shards: 100%|██████████| 8/8 [01:27<00:00,  9.80s/it]Loading checkpoint shards: 100%|██████████| 8/8 [01:27<00:00, 10.92s/it]
-Dec 03, 2024 8:43:19 PM org.apache.lucene.store.MemorySegmentIndexInputProvider <init>
-INFO: Using MemorySegmentIndexInput with Java 21; to disable start with -Dorg.apache.lucene.store.MMapDirectory.enableMemorySegments=false
-Model loaded.
-Tokenizer loaded.
-Loaded wiki_url_contents_dict.
-BM25 retriever initialized.
-Loading decomposed frames_data from /project/pi_miyyer_umass_edu/yekyung/CS646/CS646_Final_Project/data/frames_dataset_2_5_links_filtered_extracted_queries_max_5.jsonl...
-Loaded decomposed frames_data.
-Starting reranking process...
-  0%|          | 0/528 [00:00<?, ?it/s]This is a friendly reminder - the current text generation call will exceed the model's predefined maximum length (32768). Depending on the model, you may observe exceptions, performance degradation, or nothing at all.
-> /work/pi_miyyer_umass_edu/yapeichang/CS646_Final_Project/code/decompose.py(177)process_reranking()
--> valid = utils.is_integer_list(response)
-(Pdb)   0%|          | 0/528 [01:29<?, ?it/s]
-
-Traceback (most recent call last):
-  File "/work/pi_miyyer_umass_edu/yapeichang/CS646_Final_Project/code/decompose.py", line 268, in <module>
-    main()
-  File "/work/pi_miyyer_umass_edu/yapeichang/CS646_Final_Project/code/decompose.py", line 264, in main
-    pipeline.process_reranking(retrieve_output, rerank_output)
-  File "/work/pi_miyyer_umass_edu/yapeichang/CS646_Final_Project/code/decompose.py", line 177, in process_reranking
-    valid = utils.is_integer_list(response)
-            ^^^^^
-  File "/usr/lib/python3.12/bdb.py", line 90, in trace_dispatch
-    return self.dispatch_line(frame)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.12/bdb.py", line 115, in dispatch_line
-    if self.quitting: raise BdbQuit
-                      ^^^^^^^^^^^^^
-bdb.BdbQuit
