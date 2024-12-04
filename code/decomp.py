@@ -158,9 +158,9 @@ class RetrievalPipeline:
                 for query_idx, query in enumerate(queries):
                     print(f"Processing query {query_idx + 1}: {query}")
                     if self.retriever_type == "bm25":
-                        results = self._bm25_search(query)
+                        results = self._bm25_search(query, k=self.topk)
                     else:
-                        results = self._dpr_search(query)
+                        results = self._dpr_search(query, k=self.topk)
                     combined_results[f"query_{query_idx + 1}"] = {
                         "query_text": query,
                         "retrieve_results": results
@@ -366,7 +366,7 @@ def main():
     parser.add_argument(
         "--topk",
         type=int,
-        default=None,
+        default=5,
         help="Top k documents to retrieve"
     )
     parser.add_argument(

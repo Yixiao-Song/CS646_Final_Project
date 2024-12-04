@@ -17,4 +17,4 @@ module load Java/21.0.2
 source /project/pi_miyyer_umass_edu/yixiao/CS646/FinalProject/final_proj_env/bin/activate
 cd /work/pi_miyyer_umass_edu/yapeichang/CS646_Final_Project
 
-python3 code/decomp.py --maxq 5 --ndocs 9
+python3 code/decomp.py --maxq 5 --topk 5 --ndocs 9

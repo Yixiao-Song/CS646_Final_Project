@@ -31,7 +31,7 @@ class GPTGeneration():
         """
         if judge:
             message = [
-                {"role": "system", "content": "You are a helpful assistant who is good at judging whether Answer 1 is entailed in Answer 2. Return your response as a JSON object with fields for 'is_entailed' (boolean) and 'explanation' (string)."},
+                {"role": "system", "content": "You are a helpful assistant who is good at judging whether Answer 1 is entailed in Answer 2."},
                 {"role": "user", "content": prompt_text}
             ]
         else:

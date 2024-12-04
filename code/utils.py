@@ -188,7 +188,7 @@ Your turn: If Answer 1 is entailed in Answer 2, return "yes", otherwise return "
 Question: {question}
 Answer 1: {ground_truth_answer}
 Answer 2: {predicted_answer}
-Judgement:"""
+Judgement: """
 
 extract_query_prompt_template = """Please break down the following query into a list of {max_num} subqueries. The extracted subqueries must satisfy the following requirements:
 

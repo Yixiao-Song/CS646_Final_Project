@@ -12,5 +12,4 @@ python3 code/retrieval_eval.py \
 
 python3 code/retrieval_eval.py \
     --file data/Qwen_Outputs/decomp_bm25_answers_maxq5_topk1_ndocs5.jsonl \
-    --key Qwen_decomp_bm25_direct_links \
-    --eval_type ndcg
+    --key Qwen_decomp_bm25_direct_links
