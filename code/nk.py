@@ -146,9 +146,9 @@ class NKRetrievalPipeline:
             question=question,
             context=context if context else "No context available yet."
         )
-        
-        response, _, _ = self.gpt_model.get_response(prompt)
+        response = self.qwen_model.get_response(prompt)
         queries = [q.strip() for q in response.strip().split('\n')]
+        print(queries[:self.k_queries])
         return queries[:self.k_queries]
 
     def prepare_context(self, urls: List[str]) -> str:
@@ -156,7 +156,7 @@ class NKRetrievalPipeline:
         context = []
         for url in urls:
             if url in self.wiki_url_contents_dict:
-                context.append(self.wiki_url_contents_dict[url])
+                context.append(self.wiki_url_contents_dict[url]['contents'])
         return "\n\n".join(context)
 
     def retrieve_documents(self, query: str) -> List[Tuple[str, float]]:
@@ -178,7 +178,7 @@ class NKRetrievalPipeline:
                 "queries": [],
                 "retrieved_docs": []
             }
-            
+
             queries = self.generate_queries(question, context)
             
             new_docs = set()
@@ -254,7 +254,7 @@ def main():
     )
     
     input_file = "/project/pi_miyyer_umass_edu/yixiao/CS646/FinalProject/data/frames_dataset_2_5_links_filtered.jsonl"
-    output_file = f"data/Qwen_Outputs/nk_{args.retriever}_output.jsonl"
+    output_file = f"data/Qwen_Outputs/nk_{args.retriever}_step_{args.steps}_queries_{args.queries}_docs_{args.docs}_output.jsonl"
     pipeline.process_dataset(input_file, output_file)
 
 if __name__ == "__main__":
