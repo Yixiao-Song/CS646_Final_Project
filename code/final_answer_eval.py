@@ -46,7 +46,7 @@ GENERATE RESPONSE
 """
 gpt = GPTGeneration()
 
-out_dir = "data/Auto_Rater_Outputs"
+out_dir = "/project/pi_miyyer_umass_edu/yekyung/CS646/CS646_Final_Project/data/Auto_Rater_Outputs"
 alias = f"gpt4o_mini_judgment_{args.alias}"
 judgment_out_file = os.path.join(out_dir, f"{alias}.jsonl")
 print(f"output file: {judgment_out_file}")
@@ -57,7 +57,12 @@ start_point = utils.get_start_point(judgment_out_file)
 #   $0.150 / 1M input tokens
 #   $0.600 / 1M output tokens
 with open(judgment_out_file, "a") as f:
+    all_id = set()
     for dict_item in tqdm(frames_data[start_point:]):
+        query_id = dict_item['ID']
+        if query_id in all_id:
+            print("duplicated ID")
+            continue
         question = dict_item["Prompt"]
         ground_truth = dict_item["Answer"]
         predicted_answer = dict_item[args.key]

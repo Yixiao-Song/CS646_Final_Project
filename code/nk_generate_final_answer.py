@@ -51,10 +51,22 @@ print("Loaded nk_data.")
 """
 GENERATE RESPONSE
 """
+
+existed_ids = set()
+if os.path.exists(nk_answer_file):
+    print(f"{nk_answer_file} already exists")
+    with open(nk_answer_file, 'r', encoding='utf-8') as f:
+        nk_answer_ids = [json.loads(x.strip())['ID'] for x in f.readlines() if x.strip()]
+        existed_ids = set(nk_answer_ids)
+print(len(existed_ids))
 qwen_model = QwenGeneration()
 print("Qwen model loaded.")
-with open(nk_answer_file, "w") as f:
+with open(nk_answer_file, "a") as f:
     for dict_item in tqdm(nk_data):
+        query_id = dict_item['ID']
+        if query_id in existed_ids:
+            # print("duplicated ID")
+            continue
         context = dict_item['final_context']
         query = dict_item["Prompt"]
 
@@ -62,7 +74,6 @@ with open(nk_answer_file, "w") as f:
             context=context,
             question=query
         )
-
         response = qwen_model.get_response(prompt)
         ground_truth_ans = dict_item["Answer"]
 
@@ -70,5 +81,6 @@ with open(nk_answer_file, "w") as f:
         print(f"Qwen response: {response}")
 
         dict_item["Qwen_answer"] = response.strip()
+        existed_ids.add(query_id)
 
         f.write(json.dumps(dict_item) + "\n")
