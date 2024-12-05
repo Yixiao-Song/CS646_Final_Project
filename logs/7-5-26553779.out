@@ -1,0 +1,46 @@
+Removing uri version main
+Loading uri version main
+NOTE: The modules under this branch will not run on the login node. Use
+--constraint=avx512 for sbatch or srun sessions. 
+WARNING: Using incubator modules: jdk.incubator.vector
+Unrecognized keys in `rope_scaling` for 'rope_type'='yarn': {'original_max_position_embeddings'}
+INFO 12-04 23:27:51 config.py:350] This model supports multiple tasks: {'embedding', 'generate'}. Defaulting to 'generate'.
+WARNING 12-04 23:27:51 arg_utils.py:1013] Chunked prefill is enabled by default for models with max_model_len > 32K. Currently, chunked prefill might not work with some features or models. If you encounter any issues, please disable chunked prefill by setting --enable-chunked-prefill=False.
+INFO 12-04 23:27:51 config.py:1136] Chunked prefill is enabled with max_num_batched_tokens=512.
+INFO 12-04 23:27:51 llm_engine.py:249] Initializing an LLM engine (v0.6.4.post1) with config: model='Qwen/Qwen2.5-14B-Instruct', speculative_config=None, tokenizer='Qwen/Qwen2.5-14B-Instruct', skip_tokenizer_init=False, tokenizer_mode=auto, revision=None, override_neuron_config=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=131072, download_dir=None, load_format=LoadFormat.AUTO, tensor_parallel_size=1, pipeline_parallel_size=1, disable_custom_all_reduce=False, quantization=None, enforce_eager=False, kv_cache_dtype=auto, quantization_param_path=None, device_config=cuda, decoding_config=DecodingConfig(guided_decoding_backend='outlines'), observability_config=ObservabilityConfig(otlp_traces_endpoint=None, collect_model_forward_time=False, collect_model_execute_time=False), seed=0, served_model_name=Qwen/Qwen2.5-14B-Instruct, num_scheduler_steps=1, chunked_prefill_enabled=True multi_step_stream_outputs=True, enable_prefix_caching=False, use_async_output_proc=True, use_cached_outputs=False, chat_template_text_format=string, mm_processor_kwargs=None, pooler_config=None)
+INFO 12-04 23:27:52 selector.py:135] Using Flash Attention backend.
+INFO 12-04 23:27:54 model_runner.py:1072] Starting to load model Qwen/Qwen2.5-14B-Instruct...
+INFO 12-04 23:27:57 weight_utils.py:243] Using model weights format ['*.safetensors']
+Loading safetensors checkpoint shards:   0% Completed | 0/8 [00:00<?, ?it/s]
+Loading safetensors checkpoint shards:  12% Completed | 1/8 [00:08<00:57,  8.28s/it]
+Loading safetensors checkpoint shards:  25% Completed | 2/8 [00:17<00:52,  8.73s/it]
+Loading safetensors checkpoint shards:  38% Completed | 3/8 [00:25<00:41,  8.32s/it]
+Loading safetensors checkpoint shards:  50% Completed | 4/8 [00:25<00:21,  5.30s/it]
+Loading safetensors checkpoint shards:  62% Completed | 5/8 [00:26<00:10,  3.64s/it]
+Loading safetensors checkpoint shards:  75% Completed | 6/8 [00:27<00:05,  2.63s/it]
+Loading safetensors checkpoint shards:  88% Completed | 7/8 [00:27<00:01,  1.98s/it]
+Loading safetensors checkpoint shards: 100% Completed | 8/8 [00:28<00:00,  1.45s/it]
+Loading safetensors checkpoint shards: 100% Completed | 8/8 [00:28<00:00,  3.52s/it]
+
+INFO 12-04 23:28:25 model_runner.py:1077] Loading model weights took 27.5914 GB
+INFO 12-04 23:28:30 worker.py:232] Memory profiling results: total_gpu_memory=79.14GiB initial_memory_usage=28.09GiB peak_torch_memory=28.98GiB memory_usage_post_profile=28.13GiB non_torch_memory=0.53GiB kv_cache_size=41.71GiB gpu_memory_utilization=0.90
+INFO 12-04 23:28:30 gpu_executor.py:113] # GPU blocks: 14236, # CPU blocks: 1365
+INFO 12-04 23:28:30 gpu_executor.py:117] Maximum concurrency for 131072 tokens per request: 1.74x
+INFO 12-04 23:28:32 model_runner.py:1400] Capturing cudagraphs for decoding. This may lead to unexpected consequences if the model is not static. To run the model in eager mode, set 'enforce_eager=True' or use '--enforce-eager' in the CLI.
+INFO 12-04 23:28:32 model_runner.py:1404] If out-of-memory error occurs during cudagraph capture, consider decreasing `gpu_memory_utilization` or switching to eager mode. You can also reduce the `max_num_seqs` as needed to decrease memory usage.
+INFO 12-04 23:28:42 model_runner.py:1518] Graph capturing finished in 10 secs, took 0.28 GiB
+Dec 04, 2024 11:28:47 PM org.apache.lucene.store.MemorySegmentIndexInputProvider <init>
+INFO: Using MemorySegmentIndexInput with Java 21; to disable start with -Dorg.apache.lucene.store.MMapDirectory.enableMemorySegments=false
+Model loaded.
+Tokenizer loaded.
+Loaded wiki_url_contents_dict.
+BM25 retriever initialized.
+Loading decomposed frames_data from data/frames_dataset_2_5_links_filtered_extracted_queries_max_7.jsonl...
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/work/pi_miyyer_umass_edu/yapeichang/CS646_Final_Project/code/decomp.py", line 410, in <module>
+[rank0]:     main()
+[rank0]:   File "/work/pi_miyyer_umass_edu/yapeichang/CS646_Final_Project/code/decomp.py", line 402, in main
+[rank0]:     with open(frames_file, "r") as f:
+[rank0]:          ^^^^^^^^^^^^^^^^^^^^^^
+[rank0]: FileNotFoundError: [Errno 2] No such file or directory: 'data/frames_dataset_2_5_links_filtered_extracted_queries_max_7.jsonl'
+[rank0]:[W1204 23:28:49.141916614 ProcessGroupNCCL.cpp:1250] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())

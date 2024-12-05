@@ -1,0 +1,20 @@
+#!/bin/bash -l
+#SBATCH -J 3-3
+#SBATCH --partition=gpu-preempt
+#SBATCH -N 1
+#SBATCH --gpus=1
+#SBATCH --mem=100GB
+#SBATCH --constraint=a100-80g
+#SBATCH --time=4:00:00
+#SBATCH --output=slurm/%x-%j.out
+#SBATCH -c 8
+#SBATCH -d singleton
+#SBATCH --exclude=uri-gpu007
+#SBATCH -o /work/pi_miyyer_umass_edu/yapeichang/CS646_Final_Project/logs/%x-%j.out
+
+module load uri/main
+module load Java/21.0.2
+source /project/pi_miyyer_umass_edu/yixiao/CS646/FinalProject/final_proj_env/bin/activate
+cd /work/pi_miyyer_umass_edu/yapeichang/CS646_Final_Project
+
+python3 code/decomp.py --maxq 3 --topk 5 --ndocs 3

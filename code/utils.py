@@ -200,3 +200,59 @@ Your output should be in JSON format, where the key is 'atomic_questions' and th
 
 Query: {question}
 Extracted subqueries:"""
+
+extract_query_dynamic_prompt_template = """Please break down the following query into a list of subqueries. The extracted subqueries must satisfy the following requirements:
+
+1. Self-containment: Each subquery should be complete and self-contained, as if it were being asked in isolation. It should not require knowledge of the original query or other subqueries.
+2. Full coverage: The subqueries, when combined, should fully address the scope of the original query.
+3. Equal specificity: Each subquery should be equally detailed, avoiding any being overly broad or overly narrow compared to the others.
+
+Guidance for Subquery Count: You are responsible for deciding how many subqueries to extract. This decision should be guided by the goal of fully satisfying the criteria above.
+Output Format: Your output must be in JSON format. Use the key "atomic_questions" for the list of extracted subqueries.
+
+Query: {question}
+Extracted subqueries:"""
+
+extract_query_dynamic_fewshot_prompt_template = """Please break down the following query into a list of subqueries. The extracted subqueries must satisfy the following requirements:
+
+1. Self-containment: Each subquery should be complete and self-contained, as if it were being asked in isolation. It should not require knowledge of the original query or other subqueries.
+2. Full coverage: The subqueries, when combined, should fully address the scope of the original query.
+3. Equal specificity: Each subquery should be equally detailed, avoiding any being overly broad or overly narrow compared to the others.
+
+The goal is to create subqueries that effectively contribute to answering the original query. Your output must be in JSON format. Use the key "atomic_questions" for the list of extracted subqueries.
+
+Below are some examples:
+
+Example query: Which movie musical produced a song that was inspired by poetry from an American poet, who was born a week after Queen Victoria?
+Example extracted subqueries:
+{{
+  "atomic_questions": [
+    "When was Queen Victoria born?",
+    "Which American poet was born a week after Queen Victoria?",
+    "Which songs from movie musicals were inspired by American poetry?"
+  ]
+}}
+
+Example query: Who was the Catholic Pope eleven years after Emperor Charlemagne died?
+Example extracted subqueries:
+{{
+  "atomic_questions": [
+    "When did Emperor Charlemagne die?",
+    "Who have served as Catholic Popes throughout history?"
+  ]
+}}
+
+Example query: What is greater: the combined 2011 populations of Rennington (Northumberland), Lydbrook (Gloucestershire), Stow-on-the-Wold (Gloucestershire) and Witney (Oxfordshire), or the 2022 population of London?
+Example extracted subqueries:
+{{
+  "atomic_questions": [
+    "What was the population of Rennington (Northumberland) in 2011?",
+    "What was the population of Lydbrook (Gloucestershire) in 2011?",
+    "What was the population of Stow-on-the-Wold (Gloucestershire) in 2011?",
+    "What was the population of Witney (Oxfordshire) in 2011?",
+    "What was the population of London in 2022?"
+  ]
+}}
+
+Your query: {question}
+Your extracted subqueries:"""
