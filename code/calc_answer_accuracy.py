@@ -17,7 +17,7 @@ parser.add_argument(
 )
 args = parser.parse_args()
 
-file_path = f"/project/pi_miyyer_umass_edu/yekyung/CS646/CS646_Final_Project/data/Auto_Rater_Outputs/gpt4o_mini_judgment_{args.alias}.jsonl"
+file_path = f"data/Auto_Rater_Outputs/gpt4o_mini_judgment_{args.alias}.jsonl"
 with open(file_path, "r") as f:
     judgment_data = [json.loads(x.strip()) for x in f.readlines() if x.strip()]
 

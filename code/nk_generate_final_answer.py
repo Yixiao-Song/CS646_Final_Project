@@ -42,8 +42,8 @@ parser.add_argument(
     help="Number of documents to retrieve at each step"
 )
 args = parser.parse_args()
-nk_answer_file = f"/project/pi_miyyer_umass_edu/yekyung/CS646/CS646_Final_Project/data/Qwen_Outputs/nk_{args.retriever}_step_{args.steps}_queries_{args.queries}_docs_{args.docs}_answer.jsonl"
-nk_file = f"/project/pi_miyyer_umass_edu/yekyung/CS646/CS646_Final_Project/data/Qwen_Outputs/nk_{args.retriever}_step_{args.steps}_queries_{args.queries}_docs_{args.docs}_output.jsonl"
+nk_answer_file = f"data/Qwen_Outputs/nk_{args.retriever}_step_{args.steps}_queries_{args.queries}_docs_{args.docs}_answer.jsonl"
+nk_file = f"data/Qwen_Outputs/nk_{args.retriever}_step_{args.steps}_queries_{args.queries}_docs_{args.docs}_output.jsonl"
 with open(nk_file, "r") as f:
     nk_data = [json.loads(x.strip()) for x in f.readlines() if x.strip()]
 print("Loaded nk_data.")
